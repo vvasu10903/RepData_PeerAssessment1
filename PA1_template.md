@@ -19,11 +19,12 @@ The data represents the number of steps taken by an anonymous individual reporte
 
 #### Loading the data
 
-* Load the data into a data frame from the provided csv file and explore the structure and various column heading. "csv" file was already unzipped and available in the source directory.
+* Load the data into a data frame by extracting the csv file from the provided zip file. Explore the structure and various column headings. "zip" file was already available in the source directory.
 
 
 ```r
-activityData <- read.csv("activity.csv", header = TRUE)
+activityData <- read.table(unz("repdata-data-activity.zip", "activity.csv"),
+    sep = ",", header = TRUE)
 head(activityData)
 ```
 
@@ -86,12 +87,12 @@ mean(totalStepsPerDay$steps)
 
 ```r
 hist(totalStepsPerDay$steps, breaks = 20, col = "red", main = "Total Number of Steps Taken
-     Each Day", xlab = "Total Number of Steps Each Day")
+    Each Day", xlab = "Total Number of Steps Each Day")
 ```
 
 ![ Histogram of the total number of steps taken each day](figure/histogram1.png) 
 
-### Calculate and report the mean and median total number of steps taken per day 
+### Report mean and median total number of steps taken per day 
 
 * Mean is 10766
 * Median is 10765.
@@ -124,7 +125,7 @@ median(totalStepsPerDay$steps)
 meanStepsPerInterval <- aggregate(steps ~ interval, data=activityData, FUN=mean)
 plot(steps ~ interval, type = "l", col = "red", ann = F, data=meanStepsPerInterval)
 title(main="Average Steps for Each Interval of a Day",
-      sub = "5-minute Intervals", ylab = "Average Number of Steps")
+    sub = "5-minute Intervals", ylab = "Average Number of Steps")
 ```
 
 ![ Time Series Plot](figure/timeseriesplot.png) 
@@ -199,18 +200,26 @@ activityDataNew$steps[is.na(activityDataNew$steps)] <-
 
 #### Histogram of total number of steps taken each day
 
-* Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.
+* Make a histogram of the total number of steps taken each day after the imputing the missing values.
 
-* The histogram differ from the Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+* This histogram differs from the previous histogram in the respect that it displays more data points with average number of steps taken each day. Again, this is expected because we replaced missing values with the average values. We replaced a total of 8 days with average values.
 
 
 ```r
 totalStepsByDay <- aggregate(steps ~ date, data = activityDataNew, FUN=sum)
-hist(totalStepsByDay$steps, breaks = 20, col = "blue", main = "Total Number of Steps Taken
-     Each Day", xlab = "Total Number of Steps Each Day")
+hist(totalStepsByDay$steps, breaks = 20, col = "blue", ylim = c(0, 20),
+     main = "Total Number of Steps Taken Each Day",
+     xlab = "Total Number of Steps Each Day")
 ```
 
 ![ Histogram of the total number of steps taken each day](figure/histogram2.png) 
+
+#### Report mean and median of the total number of steps taken each day
+
+*  Mean = 10766 and Median = 10766.
+
+* Mean and Median values have not changed after imputing the missing values. This is as expected since we replaced the missing values by the average values of the respective intervals.
+
 
 ```r
 mean(totalStepsByDay$steps)
@@ -228,8 +237,6 @@ median(totalStepsByDay$steps)
 ## [1] 10766
 ```
 
-* Mean and Median values are still pretty much the same even after imputing the missing value - Mean = 10766 and Median = 10766.
-
 #### Difference between weekdays and weekends activity patterns
 
 * Are there differences in activity patterns between weekdays and weekends?
@@ -240,24 +247,24 @@ median(totalStepsByDay$steps)
 
 ```r
 activityDataNew[ , "weekDayEnd"] <- as.factor(ifelse(!weekdays(as.Date(activityDataNew$date,
-        '%Y-%m-%d')) %in% c("Saturday", "Sunday"), "weekday","weekend"))
-# write.table(activityDataNew, "activityDataNew.csv", sep=",", row.name=FALSE)
-averageStepsByWeekEndDay <- aggregate(averageSteps ~ weekDayEnd * interval, data = activityDataNew,
-        FUN=mean)
-# write.table(averageStepsByWeekEndDay, "averageStepsByWeekEndDay.csv", sep=",", row.name=FALSE)
+    '%Y-%m-%d')) %in% c("Saturday", "Sunday"), "weekday","weekend"))
+averageStepsByWeekEndDay <- aggregate(steps ~ weekDayEnd * interval, data =
+    activityDataNew, FUN=mean)
 ```
 
 #### Panel plot of time-series
 
 * Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). We use the ggplot2 to create the multi-panel plot.
 
+* The plots show a remarkable difference between weekdays and weekends activity levels both in timing and frequency.
+
 
 ```r
 library(ggplot2)
-qplot(interval, averageSteps, data=averageStepsByWeekEndDay, geom = c("line"),
-        size = I(1.1), facets = .~weekDayEnd, col=weekDayEnd, xlab = 
-        "5-minute Intervals", ylab = "Average Number of Steps", main = "Panel Plot
-        of Average Steps for Each Interval \n by WeekDays and Weekends")
+qplot(interval, steps, data=averageStepsByWeekEndDay, geom = c("line"),
+    size = I(1.1), facets = .~weekDayEnd, col=weekDayEnd, xlab = 
+    "5-minute Intervals", ylab = "Average Number of Steps", main =
+    "Panel Plot of Average Steps \n by WeekDays and Weekends")
 ```
 
 ![Panel Plot of Average Steps for Each Interval by Weekdays and Weekends](figure/panelplot.png) 
