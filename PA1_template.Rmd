@@ -11,9 +11,9 @@ vignette: >
 
 ## Synopsis
 
-This assignment presents the analysis of data about personal movement using activity monitoring devices such as a Fitbit, Nike Fuelband, or Jawbone Up. These type of devices are part of the "quantified self" movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. We are given a large amount of data from a personal activity monitoring device. The data represents the number of steps taken by an anonymous individual reported every 5-minute interval over 24 hours in a day. The total data was collected over two months or 61 days.
+This assignment presents the analysis of data about personal movements using activity monitoring devices such as a Fitbit, Nike Fuelband, or Jawbone Up. These type of devices are part of the "quantified self" movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. We are given a large amount of data from a personal activity monitoring device.
 
-This report analyzes the data using R and answers several multipart questions as part of this assignment.
+The data represents the number of steps taken by an anonymous individual reported every 5-minute interval over 24 hours in a day. The total data was collected over two months or 61 days. This report analyzes the data using R and answers several multipart questions as part of this assignment.
 
 ## Questions
 
@@ -29,7 +29,7 @@ str(activityData)
 
 #### Transformation and processing of data
 
-* Several NA values were noticed in the data. For the first part of the analysis we ignore the missing values.
+* Several NA (missing) values were observed in the data. For the first part of the analysis we ignore the missing values.
 
 * Only transformation of data was done to convert 5-minute time intervals into their corresponding hour/minute times and store in a separate column alongwith corresponding date. This can be used for showing the steps data in a graph on a hour/minute scale instead of 5-minute intervals.
 
@@ -50,20 +50,20 @@ totalStepsPerDay <- aggregate(steps ~ date, data=activityData, FUN=sum)
 mean(totalStepsPerDay$steps)
 ```
 
-* Mean total number of steps taken per day are `r mean(totalStepsPerDay$steps)`.
+* Mean total number of steps taken per day are `r as.integer(mean(totalStepsPerDay$steps))`.
 
 #### Histogram of total number of steps per day
 
 * Plot a histogram of the total number of steps taken each day where total steps across all the time intervals in a day were calculated for all the days in the data. 
 
-```{r, fig.cap=" Histogram of the total number of steps taken each day", fig.height=5, fig.width=7}
+```{r, histogram1, fig.cap=" Histogram of the total number of steps taken each day", fig.height=5, fig.width=7}
 hist(totalStepsPerDay$steps, breaks = 20, col = "red", main = "Total Number of Steps Taken
      Each Day", xlab = "Total Number of Steps Each Day")
 ```
 
 ### Calculate and report the mean and median total number of steps taken per day 
 
-* Mean is `r mean(totalStepsPerDay$steps)`
+* Mean is `r as.integer(mean(totalStepsPerDay$steps))`
 * Median is `r median(totalStepsPerDay$steps)`.
 
 ```{r}
@@ -77,7 +77,7 @@ median(totalStepsPerDay$steps)
 
 * Pattern on the plot shows the highest amount of activity during the mid morning hours.
 
-```{r, fig.cap=" Time Series Plot", fig.height=5, fig.width=6.5}
+```{r, timeseriesplot, fig.cap=" Time Series Plot", fig.height=5, fig.width=6.5}
 meanStepsPerInterval <- aggregate(steps ~ interval, data=activityData, FUN=mean)
 plot(steps ~ interval, type = "l", col = "red", ann = F, data=meanStepsPerInterval)
 title(main="Average Steps for Each Interval of a Day",
@@ -93,10 +93,10 @@ maxStepsInterval <- with(meanStepsPerInterval, interval[steps== max(steps)])
 maxSteps <- max(meanStepsPerInterval$steps)
 
 maxStepsInterval
-maxSteps
+round(maxSteps, 0)
 ```
 
-* Maximum number of steps are `r maxSteps` during the interval `r maxStepsInterval` (which represents time around 8:35 in the morning).
+* Maximum number of steps are `r as.integer(maxSteps)` during the interval `r maxStepsInterval` (which represents time around 8:35 in the morning).
 
 #### Imputing missing values
 
@@ -133,7 +133,7 @@ activityDataNew$steps[is.na(activityDataNew$steps)] <-
 
 * The histogram differ from the Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
-```{r, fig.cap=" Histogram of the total number of steps taken each day", fig.height=5, fig.width=6.5}
+```{r, histogram2, fig.cap=" Histogram of the total number of steps taken each day", fig.height=5, fig.width=6.5}
 totalStepsByDay <- aggregate(steps ~ date, data = activityDataNew, FUN=sum)
 hist(totalStepsByDay$steps, breaks = 20, col = "blue", main = "Total Number of Steps Taken
      Each Day", xlab = "Total Number of Steps Each Day")
@@ -141,7 +141,7 @@ mean(totalStepsByDay$steps)
 median(totalStepsByDay$steps)
 ```
 
-* Mean and Median values are still pretty much the same even after imputing the missing value - Mean = ```r mean(totalStepsByDay$steps)` and Median = `r median(totalStepsByDay$steps)`.
+* Mean and Median values are still pretty much the same even after imputing the missing value - Mean = `r as.integer(mean(totalStepsByDay$steps))` and Median = `r as.integer(median(totalStepsByDay$steps))`.
 
 #### Difference between weekdays and weekends activity patterns
 
@@ -153,19 +153,20 @@ median(totalStepsByDay$steps)
 ```{r}
 activityDataNew[ , "weekDayEnd"] <- as.factor(ifelse(!weekdays(as.Date(activityDataNew$date,
         '%Y-%m-%d')) %in% c("Saturday", "Sunday"), "weekday","weekend"))
-
+# write.table(activityDataNew, "activityDataNew.csv", sep=",", row.name=FALSE)
 averageStepsByWeekEndDay <- aggregate(averageSteps ~ weekDayEnd * interval, data = activityDataNew,
-        FUN=sum)
+        FUN=mean)
+# write.table(averageStepsByWeekEndDay, "averageStepsByWeekEndDay.csv", sep=",", row.name=FALSE)
 ```
 
 #### Panel plot of time-series
 
 * Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). We use the ggplot2 to create the multi-panel plot.
 
-```{r, fig.cap="Lattice Plot of Average Steps for Each Interval by Weekdays and Weekends", fig.height=3.5, fig.width=7}
+```{r, panelplot, fig.cap="Panel Plot of Average Steps for Each Interval by Weekdays and Weekends", fig.height=3.5, fig.width=7}
 library(ggplot2)
-myGG <- qplot(interval, averageSteps, data=averageStepsByWeekEndDay,
-           facets = .~weekDayEnd, col=weekDayEnd, main =
-           "Panel Plot of Average Steps for Each Interval \n by WeekDays and Weekends")
-myGG + geom_line(size=1)
+qplot(interval, averageSteps, data=averageStepsByWeekEndDay, geom = c("line"),
+        size = I(1.1), facets = .~weekDayEnd, col=weekDayEnd, xlab = 
+        "5-minute Intervals", ylab = "Average Number of Steps", main = "Panel Plot
+        of Average Steps for Each Interval \n by WeekDays and Weekends")
 ```

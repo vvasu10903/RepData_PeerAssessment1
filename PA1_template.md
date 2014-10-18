@@ -11,9 +11,9 @@ vignette: >
 
 ## Synopsis
 
-This assignment presents the analysis of data about personal movement using activity monitoring devices such as a Fitbit, Nike Fuelband, or Jawbone Up. These type of devices are part of the "quantified self" movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. We are given a large amount of data from a personal activity monitoring device. The data represents the number of steps taken by an anonymous individual reported every 5-minute interval over 24 hours in a day. The total data was collected over two months or 61 days.
+This assignment presents the analysis of data about personal movements using activity monitoring devices such as a Fitbit, Nike Fuelband, or Jawbone Up. These type of devices are part of the "quantified self" movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. We are given a large amount of data from a personal activity monitoring device.
 
-This report analyzes the data using R and answers several multipart questions as part of this assignment.
+The data represents the number of steps taken by an anonymous individual reported every 5-minute interval over 24 hours in a day. The total data was collected over two months or 61 days. This report analyzes the data using R and answers several multipart questions as part of this assignment.
 
 ## Questions
 
@@ -50,7 +50,7 @@ str(activityData)
 
 #### Transformation and processing of data
 
-* Several NA values were noticed in the data. For the first part of the analysis we ignore the missing values.
+* Several NA (missing) values were observed in the data. For the first part of the analysis we ignore the missing values.
 
 * Only transformation of data was done to convert 5-minute time intervals into their corresponding hour/minute times and store in a separate column alongwith corresponding date. This can be used for showing the steps data in a graph on a hour/minute scale instead of 5-minute intervals.
 
@@ -77,7 +77,7 @@ mean(totalStepsPerDay$steps)
 ## [1] 10766
 ```
 
-* Mean total number of steps taken per day are 1.0766 &times; 10<sup>4</sup>.
+* Mean total number of steps taken per day are 10766.
 
 #### Histogram of total number of steps per day
 
@@ -89,11 +89,11 @@ hist(totalStepsPerDay$steps, breaks = 20, col = "red", main = "Total Number of S
      Each Day", xlab = "Total Number of Steps Each Day")
 ```
 
-![ Histogram of the total number of steps taken each day](figure/unnamed-chunk-4.svg) 
+![ Histogram of the total number of steps taken each day](figure/histogram1.png) 
 
 ### Calculate and report the mean and median total number of steps taken per day 
 
-* Mean is 1.0766 &times; 10<sup>4</sup>
+* Mean is 10766
 * Median is 10765.
 
 
@@ -127,7 +127,7 @@ title(main="Average Steps for Each Interval of a Day",
       sub = "5-minute Intervals", ylab = "Average Number of Steps")
 ```
 
-![ Time Series Plot](figure/unnamed-chunk-6.svg) 
+![ Time Series Plot](figure/timeseriesplot.png) 
 
 #### 5-minute interval with maximum activity
 
@@ -146,14 +146,14 @@ maxStepsInterval
 ```
 
 ```r
-maxSteps
+round(maxSteps, 0)
 ```
 
 ```
-## [1] 206.2
+## [1] 206
 ```
 
-* Maximum number of steps are 206.1698 during the interval 835 (which represents time around 8:35 in the morning).
+* Maximum number of steps are 206 during the interval 835 (which represents time around 8:35 in the morning).
 
 #### Imputing missing values
 
@@ -210,7 +210,7 @@ hist(totalStepsByDay$steps, breaks = 20, col = "blue", main = "Total Number of S
      Each Day", xlab = "Total Number of Steps Each Day")
 ```
 
-![ Histogram of the total number of steps taken each day](figure/unnamed-chunk-10.svg) 
+![ Histogram of the total number of steps taken each day](figure/histogram2.png) 
 
 ```r
 mean(totalStepsByDay$steps)
@@ -228,7 +228,7 @@ median(totalStepsByDay$steps)
 ## [1] 10766
 ```
 
-* Mean and Median values are still pretty much the same even after imputing the missing value - Mean = ``1.0766 &times; 10<sup>4</sup> and Median = 1.0766 &times; 10<sup>4</sup>.
+* Mean and Median values are still pretty much the same even after imputing the missing value - Mean = 10766 and Median = 10766.
 
 #### Difference between weekdays and weekends activity patterns
 
@@ -241,9 +241,10 @@ median(totalStepsByDay$steps)
 ```r
 activityDataNew[ , "weekDayEnd"] <- as.factor(ifelse(!weekdays(as.Date(activityDataNew$date,
         '%Y-%m-%d')) %in% c("Saturday", "Sunday"), "weekday","weekend"))
-
+# write.table(activityDataNew, "activityDataNew.csv", sep=",", row.name=FALSE)
 averageStepsByWeekEndDay <- aggregate(averageSteps ~ weekDayEnd * interval, data = activityDataNew,
-        FUN=sum)
+        FUN=mean)
+# write.table(averageStepsByWeekEndDay, "averageStepsByWeekEndDay.csv", sep=",", row.name=FALSE)
 ```
 
 #### Panel plot of time-series
@@ -253,10 +254,10 @@ averageStepsByWeekEndDay <- aggregate(averageSteps ~ weekDayEnd * interval, data
 
 ```r
 library(ggplot2)
-myGG <- qplot(interval, averageSteps, data=averageStepsByWeekEndDay,
-           facets = .~weekDayEnd, col=weekDayEnd, main =
-           "Panel Plot of Average Steps for Each Interval \n by WeekDays and Weekends")
-myGG + geom_line(size=1)
+qplot(interval, averageSteps, data=averageStepsByWeekEndDay, geom = c("line"),
+        size = I(1.1), facets = .~weekDayEnd, col=weekDayEnd, xlab = 
+        "5-minute Intervals", ylab = "Average Number of Steps", main = "Panel Plot
+        of Average Steps for Each Interval \n by WeekDays and Weekends")
 ```
 
-![Lattice Plot of Average Steps for Each Interval by Weekdays and Weekends](figure/unnamed-chunk-12.svg) 
+![Panel Plot of Average Steps for Each Interval by Weekdays and Weekends](figure/panelplot.png) 
