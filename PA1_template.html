@@ -212,7 +212,7 @@ hr {
 <h4>Loading the data</h4>
 
 <ul>
-<li>Load the data into a data frame by extracting the csv file from the provided zip file. Explore the structure and various column headings. &ldquo;zip&rdquo; file was already available in the source directory.</li>
+<li>Data was loaded into a data frame by extracting the csv file from the provided zip file. We explored the structure and various column headings of the data. &ldquo;zip&rdquo; file was already available in the source directory.</li>
 </ul>
 
 <pre><code class="r">activityData &lt;- read.table(unz(&quot;repdata-data-activity.zip&quot;, &quot;activity.csv&quot;),
@@ -255,7 +255,7 @@ activityData &lt;- cbind(activityData, dateTimes)
 <h4>Mean total number of steps taken per day</h4>
 
 <ul>
-<li>Calculate the mean total number of steps taken per day. (Ignore the missing values). </li>
+<li>The mean of total number of steps taken per day was calculated while ignoring the  missing values. </li>
 </ul>
 
 <pre><code class="r">totalStepsPerDay &lt;- aggregate(steps ~ date, data=activityData, FUN=sum)
@@ -272,7 +272,7 @@ mean(totalStepsPerDay$steps)
 <h4>Histogram of total number of steps per day</h4>
 
 <ul>
-<li>Plot a histogram of the total number of steps taken each day where total steps across all the time intervals in a day were calculated for all the days in the data. </li>
+<li>Plotted a histogram of the total number of steps taken each day where total steps across all the time intervals in a day were calculated for all the days in the data. Data looks approximately normal with no noticeable skewness. </li>
 </ul>
 
 <pre><code class="r">hist(totalStepsPerDay$steps, breaks = 20, col = &quot;red&quot;, main = &quot;Total Number of Steps Taken
@@ -303,7 +303,7 @@ mean(totalStepsPerDay$steps)
 <h4>Time series plot of the average daily activity pattern</h4>
 
 <ul>
-<li><p>In order to look at the average daily activity pattern, We plot the average number of steps for each interval for a day as a time series plot (i.e. type = &ldquo;l&rdquo;) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis).</p></li>
+<li><p>In order to look at the average daily activity pattern, plotted the average number of steps for each interval for a day as a time series plot (i.e. type = &ldquo;l&rdquo;) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis).</p></li>
 <li><p>Pattern on the plot shows the highest amount of activity during the mid morning hours.</p></li>
 </ul>
 
@@ -344,7 +344,7 @@ maxStepsInterval
 
 <ul>
 <li><p>There are a number of days/intervals where there are missing values (coded as NA). The presence of missing days may introduce bias into some calculations or summaries of the data.</p></li>
-<li><p>Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs) which comes out to be 2304. We also confirm that these missing values are only in the steps column.</p></li>
+<li><p>The total number of missing values(i.e. the total number of rows with NA) in the dataset were calculated and reported which comes out to be 2304. We also confirm that these missing values are only in the steps column.</p></li>
 </ul>
 
 <pre><code class="r">sum(is.na(activityData))
@@ -362,8 +362,8 @@ maxStepsInterval
 <h4>Strategy for imputing missing values</h4>
 
 <ul>
-<li><p>A strategy has been devised for filling in all of the missing values in the dataset by calculating the means of all the daily 5-minute intervals across all days and then  filling in the mean values in the respective intervals where values are missing.</p></li>
-<li><p>A new dataset, &ldquo;activityDataNew&rdquo;&ldquo;, is created that is equal to the original dataset but with the missing data values filled in.</p></li>
+<li><p>A strategy was devised for filling in all of the missing values in the dataset by calculating the means of all the daily 5-minute intervals across all days and then  filling in the mean values in the respective intervals where values are missing.</p></li>
+<li><p>A new dataset, &ldquo;activityDataNew&rdquo;, is created that is equal to the original dataset but with the missing data values filled in.</p></li>
 </ul>
 
 <pre><code class="r">activityDataNew &lt;- merge(activityData, meanStepsPerInterval, by = &quot;interval&quot;)
@@ -380,7 +380,7 @@ activityDataNew$steps[is.na(activityDataNew$steps)] &lt;-
 <h4>Histogram of total number of steps taken each day</h4>
 
 <ul>
-<li><p>Make a histogram of the total number of steps taken each day after the imputing the missing values.</p></li>
+<li><p>Plotted a histogram of the total number of steps taken each day after the imputing the missing values.</p></li>
 <li><p>This histogram differs from the previous histogram in the respect that it displays more data points with average number of steps taken each day. Again, this is expected because we replaced missing values with the average values. We replaced a total of 8 days with average values.</p></li>
 </ul>
 
@@ -395,7 +395,8 @@ hist(totalStepsByDay$steps, breaks = 20, col = &quot;blue&quot;, ylim = c(0, 20)
 <h4>Report mean and median of the total number of steps taken each day</h4>
 
 <ul>
-<li><p>Mean = 10766 and Median = 10766.</p></li>
+<li>Mean = 10766</li>
+<li><p>Median = 10766</p></li>
 <li><p>Mean and Median values have not changed after imputing the missing values. This is as expected since we replaced the missing values by the average values of the respective intervals.</p></li>
 </ul>
 
@@ -415,8 +416,7 @@ hist(totalStepsByDay$steps, breaks = 20, col = &quot;blue&quot;, ylim = c(0, 20)
 
 <ul>
 <li><p>Are there differences in activity patterns between weekdays and weekends?</p></li>
-<li><p>A new column is added to the data frame &quot;activityDataNew&rdquo; based on the date value. Based on the date, we determine the day of the week and add this to a column named &ldquo;dayName&rdquo;.</p></li>
-<li><p>Based on the name of the day in &ldquo;dayName&rdquo; column, we determine whether it is a weekday or weekend day and then add &ldquo;weekend&rdquo; or &ldquo;weekday&rdquo; to the column named &ldquo;weekDayEnd&rdquo;.</p></li>
+<li><p>A new column was added to the data frame &ldquo;activityDataNew&rdquo; based on the date value. Based on the date, we determined the day of the week and further determined whether that day is a &ldquo;weekday&rdquo; or a &ldquo;weekend&rdquo;. These two values were added to a new column called, &ldquo;weekDayEnd&rdquo;.</p></li>
 </ul>
 
 <pre><code class="r">activityDataNew[ , &quot;weekDayEnd&quot;] &lt;- as.factor(ifelse(!weekdays(as.Date(activityDataNew$date,
@@ -428,8 +428,8 @@ averageStepsByWeekEndDay &lt;- aggregate(steps ~ weekDayEnd * interval, data =
 <h4>Panel plot of time-series</h4>
 
 <ul>
-<li><p>Make a panel plot containing a time series plot (i.e. type = &ldquo;l&rdquo;) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). We use the ggplot2 to create the multi-panel plot.</p></li>
-<li><p>The plots show a remarkable difference between weekdays and weekends activity levels both in timing and frequency.</p></li>
+<li><p>Plotted a panel plot containing a time series plot (i.e. type = &ldquo;l&rdquo;) of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). Used ggplot2 to create the multi-panel plot.</p></li>
+<li><p>The plots show a remarkable difference between weekdays&#39; and weekends&#39; activity levels both in timing and frequency.</p></li>
 </ul>
 
 <pre><code class="r">library(ggplot2)
